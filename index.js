@@ -7,6 +7,8 @@ const readdir = promisify(fs.readdir);
 const lstat = promisify(fs.lstat);
 const mkdir = promisify(fs.mkdir);
 const write = promisify(fs.writeFile);
+const unlink = promisify(fs.unlink);
+const rmdir = promisify(fs.rmdir);
 const format = "utf8";
 
 function mkdirpath(url, position = 1) {
@@ -58,8 +60,29 @@ function template(source, dist, data = {}) {
     );
 }
 
+function removedir(dir) {
+    return readdir(dir)
+        .then(dirs =>
+            Promise.all(
+                dirs.map(child => {
+                    let source = path.join(dir, child);
+                    return lstat(source).then(stat => {
+                        if (stat.isDirectory()) {
+                            return removedir(source).then(() => rmdir(source));
+                        }
+                        if (stat.isFile()) {
+                            return unlink(source);
+                        }
+                    });
+                })
+            )
+        )
+        .then(() => rmdir(dir));
+}
+
 module.exports = {
     mkdirpath,
+    removedir,
     template,
     replace
 };

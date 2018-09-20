@@ -29,7 +29,11 @@ Using the template wildcard `{{name property}}`, you can print the information t
 
 ## function mkdirpath( url:string ):Promise
 
-creates a directory path recursively, does not destroy existing content
+creates a directory path recursively, does not destroy existing content.
+
+## function removedir( url:string ):Promise
+
+removes all the contents of a directory recursively.
 
 ### Example
 
