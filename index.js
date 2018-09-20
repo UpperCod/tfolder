@@ -11,13 +11,13 @@ const unlink = promisify(fs.unlink);
 const rmdir = promisify(fs.rmdir);
 const format = "utf8";
 
-function mkdirpath(url, position = 1) {
-    url = Array.isArray(url) ? url : url.split(/(?:\/|\\)/);
-    let max = url.length,
-        use = url.slice(0, position).join("/");
+function mkdirpath(dir, position = 1) {
+    dir = Array.isArray(dir) ? dir : dir.split(/(?:\/|\\)/);
+    let max = dir.length,
+        use = dir.slice(0, position).join("/");
     return lstat(use)
         .catch(() => mkdir(use, 0777))
-        .then(() => (max > position ? mkdirpath(url, position + 1) : true));
+        .then(() => (max > position ? mkdirpath(dir, position + 1) : true));
 }
 
 function replace(text, data) {
