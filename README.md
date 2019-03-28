@@ -37,8 +37,14 @@ removes all the contents of a directory recursively.
 
 ### Example
 
-```
+```md
+# template directory
 {{name}}.md
+# mustache template inside text
+{{name}} => ::name::
+# mustache template each
+{{#list}} => ::#list::
+{{/list}} => ::/list::
 ```
 If data were `{name:"hello"}` the printed file will be `hello.md`, this happens in the same way with the contents of the files.
 
