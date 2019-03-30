@@ -20,6 +20,7 @@
 	},
 	"homepage": "https://github.com/uppercod/template-folder#readme",
 	"dependencies": {
-		"mustache": "^3.0.1"
+		"mustache": "^3.0.1",
+		"template-folder": "^1.2.0"
 	}
 }

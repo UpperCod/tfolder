@@ -14,6 +14,12 @@ const format = "utf8";
 
 mustache.tags = ["::", "::"];
 
+/**
+ * Create a directory recursively
+ * @param {string} dir
+ * @param {number} [position]
+ * @return {Promise}
+ */
 function mkdirpath(dir, position = 1) {
 	dir = Array.isArray(dir) ? dir : dir.split(/(?:\/|\\)/);
 	let max = dir.length,
@@ -57,6 +63,7 @@ function replace(text, data) {
  * @param {string} source
  * @param {string} dist
  * @param {object} data
+ * @returns {Promise}
  */
 function template(source, dist, data = {}) {
 	return mkdirpath(dist).then(() =>
@@ -93,6 +100,7 @@ function template(source, dist, data = {}) {
  * copy the source directory in dist, and fill
  * in the information based on the loaded data
  * @param {string} dir
+ * @return {Promise}
  */
 function removedir(dir) {
 	return readdir(dir)
@@ -113,10 +121,14 @@ function removedir(dir) {
 		)
 		.then(() => rmdir(dir));
 }
-
+/**
+ * @module template-folder
+ * @property {Function} mkdirpath
+ * @property {Function} removedir
+ * @property {Function} template
+ */
 module.exports = {
 	mkdirpath,
 	removedir,
-	template,
-	replace
+	template
 };
