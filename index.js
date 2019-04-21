@@ -9,10 +9,17 @@ const mkdir = promisify(fs.mkdir);
 const write = promisify(fs.writeFile);
 const unlink = promisify(fs.unlink);
 const rmdir = promisify(fs.rmdir);
+const copy = promisify(fs.copyFile);
 const mustache = require("mustache");
 const format = "utf8";
 
-mustache.tags = ["::", "::"];
+const binaryExtensions = [
+	/.(ico|jpeg|jpg|png|gif|webp)$/,
+	/.(eot|ttf|woff|otf)$/,
+	/.(pdf)$/,
+	/.(swf|mp4|webm|ogg|mp3|wap)$/,
+	/.(zip|raw|iso)$/
+];
 
 /**
  * Create a directory recursively
@@ -29,35 +36,6 @@ function mkdirpath(dir, position = 1) {
 		.then(() => (max > position ? mkdirpath(dir, position + 1) : true));
 }
 /**
- * Get an index of an object based on a string map `name.item [0]`
- * @param {object} value
- * @param {string} attr
- * @param {any} option
- * @return {string}
- */
-function getAttr(value = {}, attr) {
-	attr = attr.match(/[^\[\]\.]+/g) || [];
-	for (let i = 0; i < attr.length; i++) {
-		if (typeof value === "object" && attr[i] in value) {
-			value = value[attr[i]];
-		} else {
-			return "";
-		}
-	}
-	return value != null ? value : "";
-}
-/**
- * obtains from the string the pattern `{{.*}}`,
- * to fill with the value extracted from the object
- * @param {object} text
- * @param {string} data
- */
-function replace(text, data) {
-	return text.replace(/{{\s*([^{}]+)\s*}}/g, (all, prop) =>
-		getAttr(data, prop)
-	);
-}
-/**
  * copy the source directory in dist, and fill
  * in the information based on the loaded data
  * @param {string} source
@@ -71,24 +49,29 @@ function template(source, dist, data = {}) {
 			Promise.all(
 				dirs.map(child => {
 					let master = path.join(source, child),
-						insert = replace(path.join(dist, child), data);
+						insert = mustache.render(path.join(dist, child), data);
+
 					return lstat(master).then(stat => {
 						if (stat.isDirectory()) {
 							return template(master, insert, data);
 						}
 						if (stat.isFile()) {
-							return readfile(master, format)
-								.then(text => mustache.render(text, data))
-								.then(text => {
-									let create = () => write(insert, text, format);
-									return lstat(insert)
-										.then(stat => {
-											if (stat.isDirectory()) {
-												return create();
-											}
-										})
-										.catch(create);
-								});
+							return readfile(master, format).then(text => {
+								let isBinary = binaryExtensions.some(reg => reg.test(master));
+
+								let create = () =>
+									isBinary
+										? copy(master, insert)
+										: write(insert, mustache.render(text, data), format);
+
+								return lstat(insert)
+									.then(stat => {
+										if (stat.isDirectory()) {
+											return create();
+										}
+									})
+									.catch(create);
+							});
 						}
 					});
 				})
@@ -128,7 +111,9 @@ function removedir(dir) {
  * @property {Function} template
  */
 module.exports = {
+	binaryExtensions,
 	mkdirpath,
 	removedir,
-	template
+	template,
+	mustache
 };
