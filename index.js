@@ -14,11 +14,11 @@ const mustache = require("mustache");
 const format = "utf8";
 
 const binaryExtensions = [
-	/.(ico|jpeg|jpg|png|gif|webp)$/,
-	/.(eot|ttf|woff|otf)$/,
-	/.(pdf)$/,
-	/.(swf|mp4|webm|ogg|mp3|wap)$/,
-	/.(zip|raw|iso)$/
+	/\w.(ico|jpeg|jpg|png|gif|webp)$/,
+	/\w.(eot|ttf|woff|otf)$/,
+	/\w.(pdf)$/,
+	/\w.(swf|mp4|webm|ogg|mp3|wap)$/,
+	/\w.(zip|raw|iso)$/
 ];
 
 /**

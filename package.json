@@ -1,6 +1,6 @@
 {
 	"name": "template-folder",
-	"version": "1.4.0",
+	"version": "1.4.1",
 	"description": "This script allows you to generate folder templates",
 	"main": "index.js",
 	"scripts": {
