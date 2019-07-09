@@ -22,20 +22,6 @@ const binaryExtensions = [
 ];
 
 /**
- * Create a directory recursively
- * @param {string} dir
- * @param {number} [position]
- * @return {Promise}
- */
-function mkdirpath(dir, position = 1) {
-	dir = Array.isArray(dir) ? dir : dir.split(/(?:\/|\\)/);
-	let max = dir.length,
-		use = dir.slice(0, position).join("/");
-	return lstat(use)
-		.catch(() => mkdir(use, 0777))
-		.then(() => (max > position ? mkdirpath(dir, position + 1) : true));
-}
-/**
  * copy the source directory in dist, and fill
  * in the information based on the loaded data
  * @param {string} source
@@ -44,7 +30,7 @@ function mkdirpath(dir, position = 1) {
  * @returns {Promise}
  */
 function template(source, dist, data = {}) {
-	return mkdirpath(dist).then(() =>
+	return mkdir(dist, { recursive: true }).then(() =>
 		readdir(source).then(dirs =>
 			Promise.all(
 				dirs.map(child => {
@@ -57,12 +43,18 @@ function template(source, dist, data = {}) {
 						}
 						if (stat.isFile()) {
 							return readfile(master, format).then(text => {
-								let isBinary = binaryExtensions.some(reg => reg.test(master));
+								let isBinary = binaryExtensions.some(reg =>
+									reg.test(master)
+								);
 
 								let create = () =>
 									isBinary
 										? copy(master, insert)
-										: write(insert, mustache.render(text, data), format);
+										: write(
+												insert,
+												mustache.render(text, data),
+												format
+										  );
 
 								return lstat(insert)
 									.then(stat => {
@@ -106,13 +98,12 @@ function removedir(dir) {
 }
 /**
  * @module template-folder
- * @property {Function} mkdirpath
+ * @property {Function}
  * @property {Function} removedir
  * @property {Function} template
  */
 module.exports = {
 	binaryExtensions,
-	mkdirpath,
 	removedir,
 	template,
 	mustache
