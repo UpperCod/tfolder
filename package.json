@@ -1,6 +1,6 @@
 {
   "name": "tfolder-cli",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "This cli allows you to copy an A to B, with the advantage that in time copy generates dynamic changes",
   "main": "tfolder.js",
   "scripts": {

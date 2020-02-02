@@ -11,8 +11,7 @@ sade("tfolder <src> <dest>")
   )
   .example("tfolder ./a ./b")
   .example("tfolder ./a ./b -f")
-  .example('tfolder ./a ./b -f -d "{"name":"ea"}"')
-  .example("")
+  .example('tfolder ./a ./b -f -d "{\\"name\\":\\"...data\\"}"')
   .action(async (src, dest = "dist", { data, force }) => {
     await template(src, dest, { data: JSON.parse(data), force });
     console.log(`successful copy, check directory \`${dest}\``);

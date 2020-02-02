@@ -122,7 +122,7 @@ function asyncMap(...args) {
 }
 
 sade("tfolder <src> <dest>")
-  .version("0.0.0")
+  .version("0.1.0")
   .option("-f, --force", "force writing of existing files", false)
   .option(
     "-d, --data",
@@ -131,8 +131,7 @@ sade("tfolder <src> <dest>")
   )
   .example("tfolder ./a ./b")
   .example("tfolder ./a ./b -f")
-  .example('tfolder ./a ./b -f -d "{"name":"ea"}"')
-  .example("")
+  .example('tfolder ./a ./b -f -d "{\\"name\\":\\"...data\\"}"')
   .action(async (src, dest = "dist", { data, force }) => {
     await template(src, dest, { data: JSON.parse(data), force });
     console.log(`successful copy, check directory \`${dest}\``);
