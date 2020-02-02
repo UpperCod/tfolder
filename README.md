@@ -1,53 +1,44 @@
 # template-folder
 
-This script allows you to generate folder templates, for example to pass the contents of folder A to folder B, but reading the files and directories individually, this script does not break the current state of the destination folder, it only adds the nonexistent files in the directory.
+This package is a CLI, which allows you to copy the contents of a directory A to a directory B, with the great difference that tempalte-folder allows you to manipulate the content to be copied as you generate the reading, this with the idea that the generation is dynamic, eg:
 
-In turn, thanks to the use of the 3 argument you can pass dynamic information to the reading documents.
+```bash
+template-folder ./a ./b --data {"name":"custom-name"}
 
+./a/
+   {{name}}/
+      file-{{name}}.md
+./b/
+   custom-name/
+      file-custom-name.md
 
-## function template( url:string, url:string [, data = {}]):Promise
+```
 
-The following example will pass the existing content in the `./template` folder to the `./copy` folder.
+The template system defined for this process is mustache
+
+## Flags
+
+**-f, --force**: force the replacement of the files if they already exist
+**-d, --data**: define a json object to share with template.config.js
+
+## template.config.js
+
+It allows to extend the behavior of template-folder, by means of a function capable of modifying the variable data shared with the template, by default tempalte-folder couples the package [prompts](https://www.npmjs.com/package/prompts) to improve the experience of data generation through the terminal, eg:
 
 ```js
-const {template,mkdirpath,replace} = require("template-folder");
+import prompts from "prompts";
 
-template(
-   path.resolve(__dirname, "./template"),
-   path.resolve(__dirname, "./copy"),
-   {
-       name: "template-folder"
-   }
-).then(() => {
-   console.log("ready!");
-});
+const questions = [
+  {
+    type: "text",
+    name: "title",
+    message: "What is your GitHub username?"
+  }
+];
+
+export default function() {
+  return prompts(questions);
+}
 ```
 
-## function replace( text:string, data: Object ):string
-
-Using the template wildcard `{{name property}}`, you can print the information to the destination.
-
-## function mkdirpath( url:string ):Promise
-
-creates a directory path recursively, does not destroy existing content.
-
-## function removedir( url:string ):Promise
-
-removes all the contents of a directory recursively.
-
-### Example
-
-```md
-# template directory
-{{name}}.md
-# mustache template inside text
-{{name}} => ::name::
-# mustache template each
-{{#list}} => ::#list::
-{{/list}} => ::/list::
-```
-If data were `{name:"hello"}` the printed file will be `hello.md`, this happens in the same way with the contents of the files.
-
-If the property to be searched is not found in data, replacement will not be generated.
-
-
+**This file should only be in the main directory of the template**

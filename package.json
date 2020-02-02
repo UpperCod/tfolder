@@ -1,25 +1,38 @@
 {
-	"name": "template-folder",
-	"version": "1.4.2",
-	"description": "This script allows you to generate folder templates",
-	"main": "index.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/uppercod/template-folder.git"
-	},
-	"keywords": [
-		"node"
-	],
-	"author": "Matias Trujillo",
-	"license": "ISC",
-	"bugs": {
-		"url": "https://github.com/uppercod/template-folder/issues"
-	},
-	"homepage": "https://github.com/uppercod/template-folder#readme",
-	"dependencies": {
-		"mustache": "^3.0.1"
-	}
+  "name": "template-folder",
+  "version": "2.0.0",
+  "description": "This cli allows you to copy an A to B, with the advantage that in time copy generates dynamic changes",
+  "main": "index.js",
+  "scripts": {
+    "dev": "rollup -c -w",
+    "build": "rollup -c",
+    "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uppercod/template-folder.git"
+  },
+  "keywords": [
+    "node"
+  ],
+  "author": "Matias Trujillo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/uppercod/template-folder/issues"
+  },
+  "homepage": "https://github.com/uppercod/template-folder#readme",
+  "dependencies": {
+    "@rollup/plugin-replace": "^2.3.1",
+    "esm": "^3.2.25",
+    "mustache": "^3.0.1",
+    "prompts": "^2.3.0",
+    "sade": "^1.7.0",
+    "textextensions": "^3.3.0"
+  },
+  "devDependencies": {
+    "rollup": "^1.31.0"
+  },
+  "bin": {
+    "bundle": "./cli.js"
+  }
 }
