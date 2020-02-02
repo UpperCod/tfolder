@@ -1,20 +1,14 @@
-#!/usr/bin/env node
-'use strict';
-
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var sade = _interopDefault(require('sade'));
-var path = require('path');
-var fs = require('fs');
-var ems = _interopDefault(require('esm'));
-var mustache = _interopDefault(require('mustache'));
-var textextensions = _interopDefault(require('textextensions'));
+import { join, parse } from "path";
+import { promises } from "fs";
+import ems from "esm";
+import mustache from "mustache";
+import textextensions from "textextensions";
 
 const templateFolder = "tfolder.config.js";
 const requireEms = ems(module);
 const cwd = process.cwd();
 
-const { readdir, mkdir, stat, copyFile, readFile, writeFile } = fs.promises;
+const { readdir, mkdir, stat, copyFile, readFile, writeFile } = promises;
 /**
  * This cli allows you to copy an A to B, with the advantage
  * that in time copy generates dynamic changes
@@ -24,30 +18,30 @@ const { readdir, mkdir, stat, copyFile, readFile, writeFile } = fs.promises;
  * @param {number} deep - internal, directory depth
  * @returns {Promise}
  */
-async function template(
+export default async function template(
   dir,
   dest,
   { data, force } = {},
   deep = 0
 ) {
   try {
-    let absoluteDir = path.join(cwd, dir);
+    let absoluteDir = join(cwd, dir);
 
     if (!deep) {
       data = {
         ...data,
-        ...(await loadTemplateConfig(path.join(absoluteDir, templateFolder), data))
+        ...(await loadTemplateConfig(join(absoluteDir, templateFolder), data))
       };
       // allows you to add a new destination over the one already defined
-      dest = data.dest ? path.join(dest, data.dest) : dest;
+      dest = data.dest ? join(dest, data.dest) : dest;
       // If defined, it allows redirecting the copy into the same folder
       if (data.dir) {
-        dir = path.join(dir, data.dir);
-        absoluteDir = path.join(cwd, dir);
+        dir = join(dir, data.dir);
+        absoluteDir = join(cwd, dir);
       }
     }
 
-    let absoluteDest = path.join(cwd, dest);
+    let absoluteDest = join(cwd, dest);
 
     // run the tasks in parallel
     let [listDir] = await asyncMap(
@@ -58,8 +52,8 @@ async function template(
     return asyncMap(
       ...listDir.map(async subDir => {
         if (templateFolder == subDir) return;
-        let nextDest = path.join(dest, mustache.render(subDir, data));
-        let nextDir = path.join(dir, subDir);
+        let nextDest = join(dest, mustache.render(subDir, data));
+        let nextDir = join(dir, subDir);
 
         let [statDir, statDest] = await asyncMap(
           stat(nextDir),
@@ -70,7 +64,7 @@ async function template(
           return template(nextDir, nextDest, { data, force }, deep + 1);
         }
         if ((!statDest || force) && statDir.isFile()) {
-          let { ext, name } = path.parse(nextDest);
+          let { ext, name } = parse(nextDest);
           let type = (ext || name).replace(".", "");
           if (textextensions.includes(type)) {
             let content = await readFile(nextDir, "utf8");
@@ -120,21 +114,3 @@ async function prepareDest(dest) {
 function asyncMap(...args) {
   return Promise.all(args);
 }
-
-sade("tfolder <src> <dest>")
-  .version("0.0.0")
-  .option("-f, --force", "force writing of existing files", false)
-  .option(
-    "-d, --data",
-    "allows you to enter data to share with the json format template",
-    "{}"
-  )
-  .example("tfolder ./a ./b")
-  .example("tfolder ./a ./b -f")
-  .example('tfolder ./a ./b -f -d "{"name":"ea"}"')
-  .example("")
-  .action(async (src, dest = "dist", { data, force }) => {
-    await template(src, dest, { data: JSON.parse(data), force });
-    console.log(`successful copy, check directory \`${dest}\``);
-  })
-  .parse(process.argv);

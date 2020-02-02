@@ -1,9 +1,7 @@
-#!/usr/bin/env node
 'use strict';
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var sade = _interopDefault(require('sade'));
 var path = require('path');
 var fs = require('fs');
 var ems = _interopDefault(require('esm'));
@@ -121,20 +119,4 @@ function asyncMap(...args) {
   return Promise.all(args);
 }
 
-sade("tfolder <src> <dest>")
-  .version("0.0.0")
-  .option("-f, --force", "force writing of existing files", false)
-  .option(
-    "-d, --data",
-    "allows you to enter data to share with the json format template",
-    "{}"
-  )
-  .example("tfolder ./a ./b")
-  .example("tfolder ./a ./b -f")
-  .example('tfolder ./a ./b -f -d "{"name":"ea"}"')
-  .example("")
-  .action(async (src, dest = "dist", { data, force }) => {
-    await template(src, dest, { data: JSON.parse(data), force });
-    console.log(`successful copy, check directory \`${dest}\``);
-  })
-  .parse(process.argv);
+module.exports = template;

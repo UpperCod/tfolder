@@ -1,7 +1,7 @@
 import sade from "sade";
-import template from "./template-folder";
+import template from "./tfolder";
 
-sade("template-folder [src] [dest]")
+sade("tfolder <src> <dest>")
   .version("PKG.VERSION")
   .option("-f, --force", "force writing of existing files", false)
   .option(
@@ -9,9 +9,9 @@ sade("template-folder [src] [dest]")
     "allows you to enter data to share with the json format template",
     "{}"
   )
-  .example("template-folder ./a ./b")
-  .example("template-folder ./a ./b -f")
-  .example('template-folder ./a ./b -f -d "{"name":"ea"}"')
+  .example("tfolder ./a ./b")
+  .example("tfolder ./a ./b -f")
+  .example('tfolder ./a ./b -f -d "{"name":"ea"}"')
   .example("")
   .action(async (src, dest = "dist", { data, force }) => {
     await template(src, dest, { data: JSON.parse(data), force });
