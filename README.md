@@ -2,7 +2,7 @@
 
 ![tfolder](https://res.cloudinary.com/dz0i8dmpt/image/upload/v1580658927/github/tfolder/carbon_1.png)
 
-This package is a CLI, which allows you to copy the contents of a directory A to a directory B, with the great difference that tempalte-folder allows you to manipulate the content to be copied as you generate the reading, this with the idea that the generation is dynamic, eg:
+With tfolder you can copy the contents of a directory A to B with the advantage that the directory name and content of the files are processed by mustache, this with the idea of creating directories as a template,eg:
 
 ```bash
 tfolder ./a ./b --data {"name":"custom-name"}
@@ -14,8 +14,6 @@ tfolder ./a ./b --data {"name":"custom-name"}
    custom-name/
       file-custom-name.md
 ```
-
-The template system defined for this process is mustache
 
 ## Installation
 
@@ -43,7 +41,7 @@ It is recommended that you attach it locally to associate it with the scripts of
 
 ## tfolder.config.js
 
-It allows to extend the behavior of tfolder, by means of a function capable of modifying the variable data shared with the template, by default tempalte-folder couples the package [prompts](https://www.npmjs.com/package/prompts) to improve the experience of data generation through the terminal, eg:
+tfolder.config allows to intercept the configuration to be modified when executing the function of this file
 
 ```js
 import prompts from "prompts";
@@ -61,7 +59,8 @@ export default function() {
 }
 ```
 
-**This file should only be in the main directory of the template**
+**In the previous example by using [prompts](https://www.npmjs.com/package/prompts), included by default, you can add fields to use by your template.
+This file should only be in the main directory of the template**
 
 ## Example of use
 
