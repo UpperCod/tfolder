@@ -1,11 +1,9 @@
 import { join, parse } from "path";
 import { promises } from "fs";
-import ems from "esm";
 import mustache from "mustache";
 import textextensions from "textextensions";
 
 const templateFolder = "tfolder.config.js";
-const requireEms = ems(module);
 const cwd = process.cwd();
 
 const { readdir, mkdir, stat, copyFile, readFile, writeFile } = promises;
@@ -26,11 +24,10 @@ export default async function template(
 ) {
   try {
     let absoluteDir = join(cwd, dir);
-
     if (!deep) {
       data = {
         ...data,
-        ...(await loadTemplateConfig(join(absoluteDir, templateFolder), data))
+        ...(await loadTemplateConfig(join(absoluteDir, templateFolder), data)),
       };
       // allows you to add a new destination over the one already defined
       dest = data.dest ? join(dest, data.dest) : dest;
@@ -50,7 +47,7 @@ export default async function template(
     );
     // run the tasks in parallel
     return asyncMap(
-      ...listDir.map(async subDir => {
+      ...listDir.map(async (subDir) => {
         if (templateFolder == subDir) return;
         let nextDest = join(dest, mustache.render(subDir, data));
         let nextDir = join(dir, subDir);
@@ -87,9 +84,11 @@ export default async function template(
  */
 async function loadTemplateConfig(file, data) {
   try {
-    let md = requireEms(file);
-    return Promise.resolve(md.default(data));
-  } catch (e) {}
+    let md = require(file);
+    return Promise.resolve(md());
+  } catch (e) {
+    console.log({ e });
+  }
 }
 
 /**
@@ -102,7 +101,7 @@ async function prepareDest(dest) {
     await stat(dest);
   } catch (e) {
     await mkdir(dest, {
-      recursive: true
+      recursive: true,
     });
   }
 }

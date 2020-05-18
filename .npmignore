@@ -1,0 +1,5 @@
+node_modules
+/copy
+/test
+/src
+/rollup.config.js

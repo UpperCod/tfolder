@@ -1,13 +1,12 @@
-import prompts from "prompts";
-
+let { prompts } = require("../utils");
 const questions = [
   {
     type: "text",
     name: "title",
-    message: "What is your GitHub username?"
-  }
+    message: "What is your GitHub username?",
+  },
 ];
 
-export default function() {
+module.exports = function () {
   return prompts(questions);
-}
+};

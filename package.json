@@ -1,6 +1,6 @@
 {
   "name": "tfolder-cli",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "This cli allows you to copy an A to B, with the advantage that in time copy generates dynamic changes",
   "main": "tfolder.js",
   "scripts": {
@@ -23,16 +23,18 @@
     "url": "https://github.com/uppercod/tfolder/issues"
   },
   "homepage": "https://github.com/uppercod/tfolder#readme",
-  "dependencies": {
+  "devDependencies": {
+    "@rollup/plugin-json": "^4.0.3",
+    "@rollup/plugin-commonjs": "^11.1.0",
+    "@rollup/plugin-node-resolve": "^7.1.3",
     "@rollup/plugin-replace": "^2.3.1",
+    "builtin-modules": "^3.1.0",
     "esm": "^3.2.25",
     "mustache": "^3.0.1",
     "prompts": "^2.3.0",
+    "rollup": "^1.31.0",
     "sade": "^1.7.0",
     "textextensions": "^3.3.0"
-  },
-  "devDependencies": {
-    "rollup": "^1.31.0"
   },
   "bin": {
     "tfolder": "./cli.js"
